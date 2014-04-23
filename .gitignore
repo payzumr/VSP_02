@@ -1,5 +1,5 @@
-VSA2/.settings/*
-VSA2/bin/*
-VSA2/.classpath
-VSA2/.project
+*/.settings/*
+*/bin/*
+*/.classpath
+*/.project
 .metadata/*
