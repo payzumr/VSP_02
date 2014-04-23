@@ -34,11 +34,11 @@ public class Koordinator {
 				// Servant erzeugen
 				KoordinatorImpl koord = new KoordinatorImpl(rootPoa);
 
-				// Referenz f������r den Servant besorgen
+				// Referenz f������������������r den Servant besorgen
 				org.omg.CORBA.Object ref = rootPoa.servant_to_reference(koord);
 
 				// Downcast Corba-Objekt -> koordinator
-				koord.Koordinator href = KoordinatorHelper.narrow(ref);
+				ggt.Koordinator href = KoordinatorHelper.narrow(ref);
 
 				// Referenz zum Namensdiesnt (root naming context) holen
 				org.omg.CORBA.Object objRef = orb
