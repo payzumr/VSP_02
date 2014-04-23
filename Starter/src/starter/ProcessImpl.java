@@ -38,7 +38,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			int newNumber = null;
+			int newNumber = 0;
 			
 			
 			if(newNumber < startGGT){

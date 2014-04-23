@@ -95,6 +95,9 @@ module ggt {
                 // Methods for the Starter
                 void activateStarter (in Starter starter, in string starterName) raises( exAlreadyExists );
                 void deleteStarter (in Starter starter);
+				
+				void registerMonitor(in Monitor monitor);
+				void deleteMonitor();
                 
                 // Methods for the Client
                 void startCalculation(in long minProcesses, in long maxProcesses, in long minDelay, in long maxDelay, in long timeout, in long ggt);

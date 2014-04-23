@@ -56,7 +56,7 @@ public class Client {
 				System.out.println("Kalkulation gestartet");
 				
 			case "ende"		:
-				koordinator.exit();
+				koordinator.quit();
 				break;
 				
 			default			:
