@@ -9,6 +9,7 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.*;
 
 import ggt.KoordinatorHelper;
+import ggt.StarterHelper;
 
 public class Starter {
 
@@ -31,27 +32,30 @@ public class Starter {
 						.resolve_initial_references("RootPOA"));
 				rootPoa.the_POAManager().activate();
 
-				// Servant erzeugen
-				KoordinatorImpl koord = new KoordinatorImpl(rootPoa);
+				// NamingContext besorgen
+				NamingContextExt nc = NamingContextExtHelper.narrow(orb
+						.resolve_initial_references("NameService"));
 
-				// Referenz f������r den Servant besorgen
-				org.omg.CORBA.Object ref = rootPoa.servant_to_reference(koord);
+				
+				// Objektreferenz mit Namen "koordinator" besorgen
+				org.omg.CORBA.Object obj = nc.resolve_str(args[1]);
+
+				// Referenz fuer den Servant besorgen
+				ggt.Koordinator koord = KoordinatorHelper.narrow(obj);
+				
+				// Servant erzeugen
+				StarterImpl starter = new StarterImpl(args[0],koord,rootPoa);
+
+				// Referenz fuer den Servant besorgen
+				org.omg.CORBA.Object ref = rootPoa.servant_to_reference(starter);
 
 				// Downcast Corba-Objekt -> koordinator
-				koord.Bank href = KoordinatorHelper.narrow(ref);
-
-				// Referenz zum Namensdiesnt (root naming context) holen
-				org.omg.CORBA.Object objRef = orb
-						.resolve_initial_references("NameService");
-
-				// Verwendung von NamingContextExt, ist Teil der Interoperable
-				// Naming Service (INS) Spezifikation.
-				NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+				ggt.Starter href = StarterHelper.narrow(ref);
 
 				// binde die Object Reference an einen Namen
 				String name = args[0];
-				NameComponent path[] = ncRef.to_name(name);
-				ncRef.rebind(path, href);
+				NameComponent path[] = nc.to_name(name);
+				nc.rebind(path, href);
 				System.out.println("Koordinator laeuft ...");
 
 				// Orb starten und auf Clients warten

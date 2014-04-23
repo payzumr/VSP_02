@@ -52,7 +52,13 @@ public class Client {
 				}
 				 
 			case "start"	:
-				koordinator.startCalculation(Integer.parseInt(args[4]),Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8]), Integer.parseInt(args[9]));
+				koordinator.startCalculation(	Integer.parseInt(args[4]),
+												Integer.parseInt(args[5]), 
+												Integer.parseInt(args[6]), 
+												Integer.parseInt(args[7]), 
+												Integer.parseInt(args[8]), 
+												Integer.parseInt(args[9]));
+				
 				System.out.println("Kalkulation gestartet");
 				
 			case "ende"		:
@@ -60,7 +66,7 @@ public class Client {
 				break;
 				
 			default			:
-				System.out.println("ungültige operation");
+				System.out.println("ung��ltige operation");
 			}
 			
 		}
