@@ -90,7 +90,7 @@ module ggt {
                 
                 // Methods for the Process
                 void registerProcess(in Process process) raises( exAlreadyExists );
-                boolean terminationComplete(in Process terminator, in long seqN, in boolean status);
+                void terminationComplete(in Process terminator, in long seqN, in boolean status);
                 
                 // Methods for the Starter
                 void activateStarter (in Starter starter, in string starterName) raises( exAlreadyExists );
