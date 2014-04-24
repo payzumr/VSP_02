@@ -55,7 +55,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		starters.remove(starter);
 		}
 	
-	public synchronized void deleteMonitor(Monitor monitor) {
+	public synchronized void registerMonitor(Monitor monitor) {
 		this.monitor = monitor;
 	}
 	
@@ -63,7 +63,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		
 	}
 
-	@Override
+	@Override //timeout refactor 
 	public synchronized void startCalculation(int minProcesses, int maxProcesses, int minDelay, int maxDelay, int timeout, int ggt) {
 		koord = KoordinatorHelper.narrow(poa);
 		int [] startZahlen = new int[ringProcesses.size()];
@@ -119,6 +119,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		
 		
 		//------------------------------- hier muss der termination complete code rein
+		// soll der client solange offen bleiben oder schon beenden?
 		
 		while(notTerminated){
 			
