@@ -3,7 +3,6 @@ package server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -154,8 +153,8 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	}
 
 	@Override
-	public synchronized void quit() {
-		// TODO Auto-generated method stub
+	public synchronized void exit() {
+		
 		
 	}
 

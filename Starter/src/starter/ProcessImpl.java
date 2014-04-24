@@ -35,14 +35,14 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	}
 
 	@Override
-	public synchronized void getNumber(int number) {
+	public synchronized void newNumber(int number, String name) {
 		//theMonitor.rechnen(name, "absender", number);
 		newNumbers.add(number);
 		this.status = ProcessStatus.CALCULATE;
 	}
 
 	@Override
-	public synchronized void terminate(Process terminator) {
+	public synchronized void sendMarker(Process terminator) {
 		// TODO Auto-generated method stub
 
 	}
@@ -77,8 +77,8 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void startCalulation() {
-		leftNeighbor.getNumber(mi);
-		rightNeighbor.getNumber(mi);
+		leftNeighbor.newNumber(mi, this.name);
+		rightNeighbor.newNumber(mi, this.name );
 	}
 
 	@Override
@@ -91,8 +91,8 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 					calculateMi();
 				}
 				
-				rightNeighbor.getNumber(mi);
-				leftNeighbor.getNumber(mi);
+				rightNeighbor.newNumber(mi, this.name);
+				leftNeighbor.newNumber(mi, this.name);
 				this.status = ProcessStatus.IDLE;
 				break;
 

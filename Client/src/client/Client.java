@@ -38,6 +38,7 @@ public class Client {
 			// Down-Cast
 			Koordinator koordinator = KoordinatorHelper.narrow(obj);
 			Monitor monitor = MonitorHelper.narrow(obj2);
+			koordinator.registerMonitor(monitor);
 			
 			switch (args[1]) {
 			case "starterliste"	:
@@ -61,7 +62,7 @@ public class Client {
 				
 				System.out.println("Kalkulation gestartet");				
 			case "ende"		:
-				koordinator.quit();
+				koordinator.exit();
 				break;
 				
 			default			:

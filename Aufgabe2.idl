@@ -62,8 +62,8 @@ module ggt {
                  readonly attribute string name;
                 
                  // Methods for the other Processes
-                 void getNumber(in long number);//void newNumber(in long number, in string senderName);
-                 void terminate(in Process terminator);
+                 void newNumber(in long number, in string senderName);
+                 void sendMarker(in Process terminator);
                  void stop(in Process stopper);
                   
                  //Methods for the Starter
@@ -80,7 +80,7 @@ module ggt {
                 
                 //Methods for the Koordinator
                 void createProcess(in long count) raises( exInvalidCount );
-                void quit();
+                void exit();
         };
         
         typedef sequence<Starter> StarterList;
@@ -95,11 +95,15 @@ module ggt {
                 // Methods for the Starter
                 void activateStarter (in Starter starter, in string starterName) raises( exAlreadyExists );
                 void deleteStarter (in Starter starter);
+				
+				// Methods for the Monitor
+				void registerMonitor (in Monitor monitor);
+				void deleteMonitor ();
                 
                 // Methods for the Client
                 void startCalculation(in long minProcesses, in long maxProcesses, in long minDelay, in long maxDelay, in long timeout, in long ggt);
                 StarterList getStarterListe();
-                void quit();
+                void exit();
         };
 };
 

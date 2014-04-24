@@ -27,7 +27,9 @@ public class TerminatorThread extends Thread {
 			try {
 				sleep(termTime);
 				
-				int randomPlace = (int)Math.round(Math.random()*ring.size());
+				int randomPlace = (int)Math.round(Math.random()*ring.size()-1);
+				
+				
 				if(koord.terminationComplete(ring.get(randomPlace), sequenz)){
 					running = false;
 				};
@@ -36,6 +38,6 @@ public class TerminatorThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		koord.quit();
+		koord.exit();
 	}
 }

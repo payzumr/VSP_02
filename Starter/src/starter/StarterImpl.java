@@ -62,7 +62,7 @@ public class StarterImpl extends StarterPOA {
 	}
 
 	@Override
-	public synchronized void quit() {
+	public synchronized void exit() {
 		for (ProcessImpl e : processList) {
 			e.quit(name);
 		}
