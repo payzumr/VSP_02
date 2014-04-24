@@ -59,8 +59,7 @@ public class Client {
 												Integer.parseInt(args[8]), 
 												Integer.parseInt(args[9]));
 				
-				System.out.println("Kalkulation gestartet");
-				
+				System.out.println("Kalkulation gestartet");				
 			case "ende"		:
 				koordinator.quit();
 				break;

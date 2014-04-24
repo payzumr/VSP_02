@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAPackage.ServantNotActive;
+import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import monitor.Monitor;
 import ggt.Koordinator;
@@ -65,7 +67,13 @@ public class KoordinatorImpl extends KoordinatorPOA{
 
 	@Override //timeout refactor 
 	public synchronized void startCalculation(int minProcesses, int maxProcesses, int minDelay, int maxDelay, int timeout, int ggt) {
-		koord = KoordinatorHelper.narrow(poa);
+		KoordinatorImpl tmp = this;
+		try {
+			koord = KoordinatorHelper.narrow(poa.servant_to_reference(tmp));
+		} catch (ServantNotActive | WrongPolicy e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		int [] startZahlen = new int[ringProcesses.size()];
 		int numOfProcess = (int)Math.round(Math.random()*minProcesses)+maxProcesses;
 		
@@ -107,25 +115,20 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			showRing[i] = ringProcesses.get(i).name();
 		}
 		
-		monitor.ring(showRing);
-		monitor.startzahlen(startZahlen);
+//		monitor.ring(showRing);
+//		monitor.startzahlen(startZahlen);
 		
 		//3 Prozesse mit der kleinsten Zahl starten
 		List sortList = new ArrayList(newList.keySet());
 		Collections.sort(sortList);
-		newList.get(sortList.get(0)).startCalulation();
 		newList.get(sortList.get(1)).startCalulation();
 		newList.get(sortList.get(2)).startCalulation();
+		newList.get(sortList.get(3)).startCalulation();
 		
 		
 		//------------------------------- hier muss der termination complete code rein
 		// soll der client solange offen bleiben oder schon beenden?
 		
-		while(notTerminated){
-			
-			
-			
-		}
 		//-------------------------------
 		
 	}

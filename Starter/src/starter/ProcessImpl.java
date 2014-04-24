@@ -35,7 +35,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void getNumber(int number) {
-		// theMonitor.rechnen(name, , number);
+		//theMonitor.rechnen(name, "absender", number);
 		newNumbers.add(number);
 		this.status = ProcessStatus.CALCULATE;
 	}
@@ -108,6 +108,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 				e.printStackTrace();
 			}
 			mi = ((mi - 1) % newNumbers.poll()) + 1;
+			System.out.println("Process: " + name + " Mi = " + mi);
 
 		} else {
 			// ???
