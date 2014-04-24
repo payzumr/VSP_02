@@ -44,7 +44,7 @@ public class StarterImpl extends StarterPOA {
 				String pName = name + i;//make name
 				ProcessImpl newP = new ProcessImpl(pName);//generate new Process
 				processList.add(newP);//add to process list
-				newP.run();
+				newP.getThread().start();
 				System.out.println("huhu4");
 				try {
 					Process pro = ProcessHelper.narrow(poa.servant_to_reference(newP));//narrow ProcessImpl to Process

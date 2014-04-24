@@ -20,11 +20,12 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	private int timeout;
 	private Monitor theMonitor;
 	private Koordinator koor;
-
+	private Thread tp;
 	private int mi;
 
 	public ProcessImpl(String name) {
 		super();
+		this.tp = new Thread(this);
 		this.name = name;
 	}
 
@@ -116,6 +117,10 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			newNumbers.poll();
 		}
 		
+	}
+	
+	public Thread getThread(){
+		return this.tp;
 	}
 
 }
