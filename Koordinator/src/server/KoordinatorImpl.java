@@ -74,7 +74,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		int numOfProcess = 5;//(int)Math.round(Math.random()*minProcesses)+maxProcesses;
+		int numOfProcess = (int)Math.round(Math.random()*(maxProcesses-minProcesses))+minProcesses;
 		
 		System.out.println("starters: " + starters.size());
 		for (Starter e : starters.keySet()) {
@@ -100,7 +100,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		for (int i = 0; i < ringProcesses.size(); i++){
 			System.out.println("i " + i);
 			
-			int startGGT = ggt*((int)Math.round(Math.random()*1)+100)*((int)Math.round(Math.random()*1)+100);
+			int startGGT = ggt*((int)Math.round(Math.random()*100)+1)*((int)Math.round(Math.random()*100)+1);
 			startZahlen[i] = startGGT;
 			int delay = (int)Math.round(Math.random()*minDelay)+maxDelay;
 			
