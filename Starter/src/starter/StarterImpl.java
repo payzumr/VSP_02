@@ -49,6 +49,7 @@ public class StarterImpl extends StarterPOA {
 				try {
 					Process pro = ProcessHelper.narrow(poa.servant_to_reference(newP));//narrow ProcessImpl to Process
 					koor.registerProcess(pro);//register process at Koordinator
+					System.out.println("huhu5");
 				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

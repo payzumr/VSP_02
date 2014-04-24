@@ -76,8 +76,9 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	}
 
 	@Override
-	public void startCalulation() {
-
+	public synchronized void startCalulation() {
+		leftNeighbor.getNumber(mi);
+		rightNeighbor.getNumber(mi);
 	}
 
 	@Override
@@ -96,6 +97,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 				break;
 
 			default:
+				
 				break;
 			}
 		}
@@ -103,12 +105,12 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	private void calculateMi() {
 		if (newNumbers.getFirst() < mi) {
-			try {
-				this.wait(delay);// simulate complex calculation
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}// simulate complex calculation
 			mi = ((mi - 1) % newNumbers.poll()) + 1;
 			System.out.println("Process: " + name + " Mi = " + mi);
 

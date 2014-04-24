@@ -36,7 +36,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	
 
 	@Override
-	public synchronized void registerProcess(Process process) throws exAlreadyExists {
+	public void registerProcess(Process process) throws exAlreadyExists {
 		processes.add(process);
 		
 	}
@@ -74,8 +74,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		int [] startZahlen = new int[ringProcesses.size()];
-		int numOfProcess = (int)Math.round(Math.random()*minProcesses)+maxProcesses;
+		int numOfProcess = 5;//(int)Math.round(Math.random()*minProcesses)+maxProcesses;
 		
 		System.out.println("starters: " + starters.size());
 		for (Starter e : starters.keySet()) {
@@ -91,21 +90,26 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		int length = processes.size();
 		for(int j = 0; j < length; j++)
 		{
-			int randomPlace = (int)Math.round(Math.random()*processes.size());
+			int randomPlace = (int)Math.round(Math.random()*(processes.size()-1));
 			ringProcesses.add(processes.get(randomPlace));
 			processes.remove(randomPlace);
 		}
 		System.out.println("huhu2");
+		System.out.println("ring size. " + ringProcesses.size());
+		int [] startZahlen = new int[ringProcesses.size()];
 		for (int i = 0; i < ringProcesses.size(); i++){
+			System.out.println("i " + i);
 			
 			int startGGT = ggt*((int)Math.round(Math.random()*1)+100)*((int)Math.round(Math.random()*1)+100);
 			startZahlen[i] = startGGT;
 			int delay = (int)Math.round(Math.random()*minDelay)+maxDelay;
-		
+			
 			if(i == 0){
-				ringProcesses.get(i).init(ringProcesses.get(i+1), ringProcesses.get(ringProcesses.size()), startGGT , delay, timeout, monitor, koord);
+//				System.out.println("huhu3");
+//				System.out.println(ringProcesses.get(0).name());
+				ringProcesses.get(i).init(ringProcesses.get(i+1), ringProcesses.get(ringProcesses.size()-1), startGGT , delay, timeout, monitor, koord);
 			}
-			else if(i == ringProcesses.size()){
+			else if(i == ringProcesses.size()-1){
 				ringProcesses.get(i).init(ringProcesses.get(0), ringProcesses.get(i-1), startGGT , delay, timeout, monitor, koord);
 			}
 			else{
@@ -126,9 +130,9 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		System.out.println("Prozesse: "+newList.size());
 		List<Integer> sortList = new ArrayList<Integer>(newList.keySet());
 		Collections.sort(sortList);
+		newList.get(sortList.get(0)).startCalulation();
 		newList.get(sortList.get(1)).startCalulation();
 		newList.get(sortList.get(2)).startCalulation();
-		newList.get(sortList.get(3)).startCalulation();
 		
 		
 		//------------------------------- hier muss der termination complete code rein
