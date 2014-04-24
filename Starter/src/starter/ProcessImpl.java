@@ -1,17 +1,30 @@
 package starter;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAPackage.ServantNotActive;
+import org.omg.PortableServer.POAPackage.WrongPolicy;
 
 import monitor.Monitor;
 import ggt.Koordinator;
 import ggt.Process;
+import ggt.ProcessHelper;
 import ggt.ProcessPOA;
 
 public class ProcessImpl extends ProcessPOA implements Runnable {
 	private String name;
+	private POA poa;
+	
 	private volatile boolean running = true;
-	private ProcessStatus status = ProcessStatus.IDLE;
 	private LinkedList<Integer> newNumbers = new LinkedList<Integer>();
+	private LinkedList<String> newMarkers = new LinkedList<String>();
+	private LinkedList<Integer> newSeqNumbers = new LinkedList<Integer>();
+	
+	private BlockingQueue<ProcessStatus> commandFifo = new LinkedBlockingQueue<ProcessStatus>();
 
 	private Process rightNeighbor;
 	private Process leftNeighbor;
@@ -23,10 +36,16 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	private Thread tp;
 	private int mi;
 
-	public ProcessImpl(String name) {
+	private boolean rightMark = false;
+	private boolean leftMark = false;
+	private boolean terminateMark = false;
+	private int sequenceNumber = 0;
+
+	public ProcessImpl(String name, POA poa) {
 		super();
 		this.tp = new Thread(this);
 		this.name = name;
+		this.poa = poa;
 	}
 
 	@Override
@@ -36,14 +55,20 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void newNumber(int number, String name) {
-		//theMonitor.rechnen(name, "absender", number);
+		theMonitor.rechnen(name, name, number);
 		newNumbers.add(number);
-		this.status = ProcessStatus.CALCULATE;
+		commandFifo.add(ProcessStatus.CALCULATE);
 	}
 
 	@Override
-	public synchronized void sendMarker(Process terminator) {
-		// TODO Auto-generated method stub
+	public synchronized void sendMarker(String terminator, int seqN) {
+		if (terminator != null) {
+			newMarkers.add(terminator);
+		}else{
+			newMarkers.add("Koordinator");
+		}
+		newSeqNumbers.add(seqN);
+		commandFifo.add(ProcessStatus.TERMINATE);
 
 	}
 
@@ -78,51 +103,98 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	@Override
 	public synchronized void startCalulation() {
 		leftNeighbor.newNumber(mi, this.name);
-		rightNeighbor.newNumber(mi, this.name );
+		rightNeighbor.newNumber(mi, this.name);
 	}
 
 	@Override
 	public void run() {
 		System.out.println("BAMs");
 		while (running) {
-			switch (status) {
-			case CALCULATE:
-				while (!newNumbers.isEmpty()) {
-					calculateMi();
-				}
-				
-				rightNeighbor.newNumber(mi, this.name);
-				leftNeighbor.newNumber(mi, this.name);
-				this.status = ProcessStatus.IDLE;
-				break;
 
-			default:
-				
-				break;
+			if (!commandFifo.isEmpty()) {
+				switch (commandFifo.poll()) {
+				case CALCULATE:
+					calculateMi();
+					break;
+
+				case TERMINATE:
+					snapshot();
+					break;
+				default:
+
+					break;
+				}
 			}
 		}
 	}
 
-	private void calculateMi() {
-		if (newNumbers.getFirst() < mi) {
+	private void snapshot() {
+		if(newSeqNumbers.getFirst() > sequenceNumber){
+			rightMark = false;
+			leftMark = false;
+			terminateMark = true;
+			sequenceNumber = newSeqNumbers.poll();
+			rightNeighbor.sendMarker(this.name, sequenceNumber);
+			leftNeighbor.sendMarker(this.name, sequenceNumber);
+		}
+		if(rightNeighbor.name() == newMarkers.getFirst()){
+			rightMark = true;
+		}else if(leftNeighbor.name() == newMarkers.getFirst()){
+			leftMark = true;
+		}
+		
+		if(rightMark && leftMark){
+			if(terminateMark){
+				Process pro;
 				try {
-					Thread.sleep(delay);
-				} catch (InterruptedException e) {
+					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
+					koor.terminationComplete(pro, sequenceNumber, true);
+				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}// simulate complex calculation
+				}
+			}else{
+				Process pro;
+				try {
+					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
+					koor.terminationComplete(pro, sequenceNumber, false);
+				} catch (ServantNotActive | WrongPolicy e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		theMonitor.terminieren(name, newMarkers.poll(), terminateMark);
+		
+	}
+
+	private void calculateMi() {
+		if (newNumbers.getFirst() < mi) {
+			try {
+				Thread.sleep(delay);// simulate complex calculation
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			mi = ((mi - 1) % newNumbers.poll()) + 1;
 			System.out.println("Process: " + name + " Mi = " + mi);
-
+			
+			terminateMark = false;
+			rightNeighbor.newNumber(mi, this.name);
+			leftNeighbor.newNumber(mi, this.name);
 		} else {
 			// ???
 			newNumbers.poll();
 		}
-		
+
 	}
-	
-	public Thread getThread(){
+
+	public Thread getThread() {
 		return this.tp;
+	}
+
+	public int getMi() {
+		return mi;
 	}
 
 }

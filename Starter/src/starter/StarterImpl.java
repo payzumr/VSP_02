@@ -42,7 +42,7 @@ public class StarterImpl extends StarterPOA {
 			System.out.println("huhu3");
 			for (int i = 0; i < numberOfProcesses; i++) {
 				String pName = name + i;//make name
-				ProcessImpl newP = new ProcessImpl(pName);//generate new Process
+				ProcessImpl newP = new ProcessImpl(pName, poa);//generate new Process
 				processList.add(newP);//add to process list
 				newP.getThread().start();
 				System.out.println("huhu4");

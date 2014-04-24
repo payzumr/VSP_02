@@ -63,7 +63,7 @@ module ggt {
                 
                  // Methods for the other Processes
                  void newNumber(in long number, in string senderName);
-                 void sendMarker(in Process terminator);
+                 void sendMarker(in string terminator, in long seqN);
                  void stop(in Process stopper);
                   
                  //Methods for the Starter
@@ -90,7 +90,7 @@ module ggt {
                 
                 // Methods for the Process
                 void registerProcess(in Process process) raises( exAlreadyExists );
-                boolean terminationComplete(in Process terminator, in long result);
+                boolean terminationComplete(in Process terminator, in long seqN, in boolean status);
                 
                 // Methods for the Starter
                 void activateStarter (in Starter starter, in string starterName) raises( exAlreadyExists );

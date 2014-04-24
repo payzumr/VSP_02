@@ -27,12 +27,16 @@ public class TerminatorThread extends Thread {
 			try {
 				sleep(termTime);
 				
-				int randomPlace = (int)Math.round(Math.random()*ring.size()-1);
+				int randomPlace = (int)Math.round(Math.random()*(ring.size()-1));
 				
-				
-				if(koord.terminationComplete(ring.get(randomPlace), sequenz)){
+				if(!koord.terminated){
+					ring.get(randomPlace).sendMarker("Koordinator", sequenz);
+					sequenz++;
+					
+				}else{
 					running = false;
-				};
+					koord.monitor.ergebnis(koord.lastProcess.name(), 1234);
+				}
 				
 			} catch (InterruptedException e) {
 				e.printStackTrace();

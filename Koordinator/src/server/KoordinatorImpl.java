@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
@@ -23,11 +25,16 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	
 	private Map<Starter, String> starters = new HashMap<Starter, String>();
 	private List<Process> processes = new ArrayList<Process>();
-	private List<Process> ringProcesses = new ArrayList<Process>(); 
-	private Monitor monitor;
+	private List<Process> ringProcesses = new ArrayList<Process>();
+	Monitor monitor;
 	private Koordinator koord;
 	private POA poa;
-	private boolean notTerminated = true;
+	
+	private int aktuelleSeqN = 0;
+	private int terminatedProcessCounter = 0;
+	boolean terminated = false;
+	ggt.Process lastProcess;
+	
 	
 	public KoordinatorImpl(POA poa){
 		this.poa = poa;
@@ -41,8 +48,16 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	}
 
 	@Override
-	public synchronized boolean terminationComplete(Process terminator, int result) {
-		// TODO Auto-generated method stub
+	public synchronized boolean terminationComplete(Process terminator, int seqN, boolean status) {
+		if(aktuelleSeqN == seqN){
+			terminatedProcessCounter++;
+			if(terminatedProcessCounter == processes.size()){
+				lastProcess = terminator;
+				terminated = true;
+			}
+		}else if(aktuelleSeqN < seqN){
+			terminatedProcessCounter = 0;
+		}
 		return false;
 	}
 
@@ -121,8 +136,8 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			showRing[i] = ringProcesses.get(i).name();
 		}
 		
-//		monitor.ring(showRing);
-//		monitor.startzahlen(startZahlen);
+		monitor.ring(showRing);
+		monitor.startzahlen(startZahlen);
 		
 		//3 Prozesse mit der kleinsten Zahl starten
 		System.out.println("Prozesse: "+newList.size());
@@ -135,6 +150,9 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		
 		//------------------------------- hier muss der termination complete code rein
 		// soll der client solange offen bleiben oder schon beenden?
+		
+		TerminatorThread tt = new TerminatorThread(timeout, ringProcesses, this);
+		tt.start();
 		
 		//-------------------------------
 		
