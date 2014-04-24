@@ -33,15 +33,19 @@ public class StarterImpl extends StarterPOA {
 
 	@Override
 	public synchronized void createProcess(int count) throws exInvalidCount {
+		System.out.println("huhu1");
 		int numberOfProcesses = count;
 		if (numberOfProcesses < 1) {
+			System.out.println("huhu2");
 			throw new exInvalidCount();
 		} else {
+			System.out.println("huhu3");
 			for (int i = 0; i < numberOfProcesses; i++) {
 				String pName = name + i;//make name
 				ProcessImpl newP = new ProcessImpl(pName);//generate new Process
 				processList.add(newP);//add to process list
 				newP.run();
+				System.out.println("huhu4");
 				try {
 					Process pro = ProcessHelper.narrow(poa.servant_to_reference(newP));//narrow ProcessImpl to Process
 					koor.registerProcess(pro);//register process at Koordinator

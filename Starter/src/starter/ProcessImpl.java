@@ -81,6 +81,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public void run() {
+		System.out.println("BAMs");
 		while (running) {
 			switch (status) {
 			case CALCULATE:

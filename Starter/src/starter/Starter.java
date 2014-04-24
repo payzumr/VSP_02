@@ -52,6 +52,9 @@ public class Starter {
 				// Downcast Corba-Objekt -> koordinator
 				ggt.Starter href = StarterHelper.narrow(ref);
 
+				//starter bei koordinator anmelden
+				koord.activateStarter(href, args[0]);
+
 				// binde die Object Reference an einen Namen
 				String name = args[0];
 				NameComponent path[] = nc.to_name(name);

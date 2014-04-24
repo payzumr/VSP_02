@@ -77,7 +77,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		int [] startZahlen = new int[ringProcesses.size()];
 		int numOfProcess = (int)Math.round(Math.random()*minProcesses)+maxProcesses;
 		
-		System.out.println("starter: " + starters.size());
+		System.out.println("starters: " + starters.size());
 		for (Starter e : starters.keySet()) {
 			try{
 				e.createProcess(numOfProcess);
@@ -86,6 +86,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			}
 		}
 		
+		System.out.println("huhu1");
 		Map<Integer, Process> newList = new HashMap<Integer, Process>();
 		int length = processes.size();
 		for(int j = 0; j < length; j++)
@@ -94,6 +95,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			ringProcesses.add(processes.get(randomPlace));
 			processes.remove(randomPlace);
 		}
+		System.out.println("huhu2");
 		for (int i = 0; i < ringProcesses.size(); i++){
 			
 			int startGGT = ggt*((int)Math.round(Math.random()*1)+100)*((int)Math.round(Math.random()*1)+100);
@@ -112,6 +114,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			newList.put(startGGT,ringProcesses.get(i) );
 		}
 		String[] showRing = new String[ringProcesses.size()];
+		System.out.println("huhu3");
 		for (int i = 0; i < ringProcesses.size(); i++) {
 			showRing[i] = ringProcesses.get(i).name();
 		}
@@ -120,7 +123,7 @@ public class KoordinatorImpl extends KoordinatorPOA{
 //		monitor.startzahlen(startZahlen);
 		
 		//3 Prozesse mit der kleinsten Zahl starten
-		System.out.println(newList.size());
+		System.out.println("Prozesse: "+newList.size());
 		List<Integer> sortList = new ArrayList<Integer>(newList.keySet());
 		Collections.sort(sortList);
 		newList.get(sortList.get(1)).startCalulation();
