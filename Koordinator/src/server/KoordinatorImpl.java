@@ -98,7 +98,6 @@ public class KoordinatorImpl extends KoordinatorPOA{
 		System.out.println("ring size. " + ringProcesses.size());
 		int [] startZahlen = new int[ringProcesses.size()];
 		for (int i = 0; i < ringProcesses.size(); i++){
-			System.out.println("i " + i);
 			
 			int startGGT = ggt*((int)Math.round(Math.random()*100)+1)*((int)Math.round(Math.random()*100)+1);
 			startZahlen[i] = startGGT;
