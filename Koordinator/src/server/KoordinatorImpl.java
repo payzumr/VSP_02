@@ -186,7 +186,30 @@ public class KoordinatorImpl extends KoordinatorPOA {
 
 	@Override
 	public synchronized void exit() {
-
+		if (!starters.isEmpty()) {
+			for (Starter e : getStarterListe()) {
+				e.exit();
+			}
+		}
+		sleep();
+	}
+	
+	static void sleep() {
+		try {
+			new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					server.Koordinator.getORB().shutdown(true);
+					System.exit(0);
+				}
+			}.start();
+		} catch (Exception e) {
+			System.out.println("exit failed");
+		}
 	}
 
 }

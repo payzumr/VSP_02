@@ -49,6 +49,5 @@ public class TerminatorThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		koord.exit();
 	}
 }
