@@ -48,7 +48,8 @@ public class KoordinatorImpl extends KoordinatorPOA {
 		System.out.println("aktuelleSeq " + aktuelleSeqN + "eingang" + seqN);
 		if (aktuelleSeqN == seqN) {
 			terminatedProcessCounter++;
-			if (terminatedProcessCounter == processes.size()) {
+			System.out.println("Counter: " + terminatedProcessCounter + " Size: " + ringProcesses.size());
+			if (terminatedProcessCounter == ringProcesses.size()) {
 				lastProcess = terminator;
 				terminated = true;
 			}

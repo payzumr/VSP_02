@@ -72,6 +72,7 @@ module ggt {
                  //Methods for the Koordinator
                  void init(in Process rightNeighbor, in Process leftNeighbor, in long  startGGT, in long delay, in Monitor theMonitor, in Koordinator koor);
                  void startCalulation();
+				 long getMi();
         };
         
         interface Starter { 

@@ -9,7 +9,7 @@ public class TerminatorThread extends Thread {
 	private List<Process> ring;
 	private KoordinatorImpl koord;
 	private volatile boolean running = true;
-	private int sequenz = 0;
+	private int sequenz = 1;
 
 	public TerminatorThread(int termTime, List<Process> ring,
 			KoordinatorImpl koord) {
@@ -31,12 +31,11 @@ public class TerminatorThread extends Thread {
 
 				if (!koord.terminated) {
 					ring.get(randomPlace).sendMarker("Koordinator", sequenz);
-					System.out.println("termThread seq++: " + sequenz);
 					sequenz++;
 
 				} else {
 					running = false;
-					koord.monitor.ergebnis(koord.lastProcess.name(), 1234);
+					koord.monitor.ergebnis(koord.lastProcess.name(), koord.lastProcess.getMi());
 				}
 
 			} catch (InterruptedException e) {

@@ -61,7 +61,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	@Override
 	public synchronized void sendMarker(String terminator, int seqN) {
 
-		if (sequenceNumber < seqN) {
+		if (sequenceNumber <= seqN) {
 
 			newMarkers.add(terminator);
 			newSeqNumbers.add(seqN);
@@ -125,6 +125,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	}
 
 	private void snapshot() {
+		System.out.println("neue nummer: " + newSeqNumbers.getFirst() + "alte seq: " + sequenceNumber);
 		if (newSeqNumbers.getFirst() > sequenceNumber) {
 			rightMark = false;
 			leftMark = false;
@@ -132,12 +133,15 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			sequenceNumber = newSeqNumbers.poll();
 			rightNeighbor.sendMarker(this.name, sequenceNumber);
 			leftNeighbor.sendMarker(this.name, sequenceNumber);
+		}else{
+			newSeqNumbers.poll();
 		}
-		System.out.println("new marker: " + newMarkers.getFirst());
-		if (rightNeighbor.name() == newMarkers.getFirst()) {
+		
+		System.out.println("new marker: " + newMarkers.getFirst() + "rightmarker");
+		if (rightNeighbor.name().equals(newMarkers.getFirst())) {
 			rightMark = true;
 		}
-		if (leftNeighbor.name() == newMarkers.getFirst()) {
+		if (leftNeighbor.name().equals(newMarkers.getFirst())) {
 			leftMark = true;
 		}
 
@@ -164,8 +168,12 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 			}
 		}
-		theMonitor.terminieren(name, newMarkers.poll(), terminateMark);
-
+		if(rightMark && leftMark && terminateMark){
+			
+			theMonitor.terminieren(name, newMarkers.poll(), true);
+		}else{
+			theMonitor.terminieren(name, newMarkers.poll(), false);
+		}
 	}
 
 	private void calculateMi() {
