@@ -41,7 +41,7 @@ public class TerminatorThread extends Thread {
 					Starter[] tmp = koord.getStarterListe();
 					for (int i = 0; i < tmp.length; i++) {
 						//processExit muss in die IDL (aus der StartImpl)
-						//tmp[i].processExit();
+						tmp[i].processExit();
 					}
 					
 				}

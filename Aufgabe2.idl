@@ -82,6 +82,7 @@ module ggt {
                 //Methods for the Koordinator
                 void createProcess(in long count) raises( exInvalidCount );
                 void exit();
+				void processExit();
         };
         
         typedef sequence<Starter> StarterList;
