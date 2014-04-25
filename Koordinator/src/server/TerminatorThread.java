@@ -1,6 +1,7 @@
 package server;
 
 import ggt.Process;
+import ggt.Starter;
 
 import java.util.List;
 
@@ -36,8 +37,14 @@ public class TerminatorThread extends Thread {
 				} else {
 					running = false;
 					koord.monitor.ergebnis(koord.lastProcess.name(), koord.lastProcess.getMi());
+					//Aufruf der Exit Methode der Starter
+					Starter[] tmp = koord.getStarterListe();
+					for (int i = 0; i < tmp.length; i++) {
+						//processExit muss in die IDL (aus der StartImpl)
+						//tmp[i].processExit();
+					}
+					
 				}
-
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

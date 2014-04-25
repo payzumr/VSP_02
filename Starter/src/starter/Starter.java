@@ -17,7 +17,7 @@ public class Starter {
 
 	public static void main(String args[]) {
 		if (args.length == 0) {
-			System.out.println("Koordinator Namen eingeben...");
+			System.out.println("Starter Namen eingeben...");
 		} else {
 
 			try {
@@ -59,15 +59,17 @@ public class Starter {
 				String name = args[0];
 				NameComponent path[] = nc.to_name(name);
 				nc.rebind(path, href);
-				System.out.println("Koordinator laeuft ...");
+				System.out.println("Starter laeuft ...");
 
 				// Orb starten und auf Clients warten
 				orb.run();
+				//entfernen der StarterImpl wenn ORB Shutdown
+				koord.deleteStarter(href);
 			} catch (Exception e) {
 				System.err.println("Fehler: " + e);
 				e.printStackTrace(System.out);
 			}
-			System.out.println("BankServer Exit");
+			System.out.println("Starter Exit");
 		}
 		
 

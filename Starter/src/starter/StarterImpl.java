@@ -66,10 +66,21 @@ public class StarterImpl extends StarterPOA {
 
 	@Override
 	public synchronized void exit() {
+		try {
+			new Thread() {
+				public void run() {
+					System.exit(0);
+				}
+			}.start();
+		} catch (Exception e) {
+			System.err.println("Fehler: " + e);
+			e.printStackTrace(System.out);
+		}
+	}
+	
+	public synchronized void processExit(){
 		for (ProcessImpl e : processList) {
 			e.quit(name);
 		}
-
 	}
-
 }
