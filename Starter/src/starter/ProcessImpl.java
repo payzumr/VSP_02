@@ -144,11 +144,12 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 		}
 		
 		if(rightMark && leftMark){
+			System.out.println("right and left true");
 			if(terminateMark){
 				Process pro;
 				try {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
-					koor.terminationComplete(pro, sequenceNumber, true);
+					koor.terminationCcheck(pro, sequenceNumber, true);
 				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -157,7 +158,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 				Process pro;
 				try {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
-					koor.terminationComplete(pro, sequenceNumber, false);
+					koor.terminationCcheck(pro, sequenceNumber, false);
 				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -48,7 +48,8 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	}
 
 	@Override
-	public synchronized boolean terminationComplete(Process terminator, int seqN, boolean status) {
+	public synchronized void terminationCcheck(Process terminator, int seqN, boolean status) {
+		System.out.println("aktuelleSeq " + aktuelleSeqN + "eingang" + seqN);
 		if(aktuelleSeqN == seqN){
 			terminatedProcessCounter++;
 			if(terminatedProcessCounter == processes.size()){
@@ -57,8 +58,9 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			}
 		}else if(aktuelleSeqN < seqN){
 			terminatedProcessCounter = 0;
+			aktuelleSeqN = seqN;
+			System.out.println("else " + seqN);
 		}
-		return false;
 	}
 
 	@Override

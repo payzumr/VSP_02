@@ -31,6 +31,7 @@ public class TerminatorThread extends Thread {
 				
 				if(!koord.terminated){
 					ring.get(randomPlace).sendMarker("Koordinator", sequenz);
+					System.out.println("termThread seq++: " + sequenz);
 					sequenz++;
 					
 				}else{
