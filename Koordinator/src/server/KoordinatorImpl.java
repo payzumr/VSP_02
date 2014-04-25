@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAPackage.ServantNotActive;
 import org.omg.PortableServer.POAPackage.WrongPolicy;
@@ -21,42 +18,41 @@ import ggt.Starter;
 import ggt.KoordinatorPackage.exAlreadyExists;
 import ggt.StarterPackage.exInvalidCount;
 
-public class KoordinatorImpl extends KoordinatorPOA{
-	
+public class KoordinatorImpl extends KoordinatorPOA {
+
 	private Map<Starter, String> starters = new HashMap<Starter, String>();
 	private List<Process> processes = new ArrayList<Process>();
 	private List<Process> ringProcesses = new ArrayList<Process>();
 	Monitor monitor;
 	private Koordinator koord;
 	private POA poa;
-	
+
 	private int aktuelleSeqN = 0;
 	private int terminatedProcessCounter = 0;
 	boolean terminated = false;
 	ggt.Process lastProcess;
-	
-	
-	public KoordinatorImpl(POA poa){
+
+	public KoordinatorImpl(POA poa) {
 		this.poa = poa;
 	}
-	
 
 	@Override
 	public void registerProcess(Process process) throws exAlreadyExists {
 		processes.add(process);
-		
+
 	}
 
 	@Override
-	public synchronized void terminationCcheck(Process terminator, int seqN, boolean status) {
+	public synchronized void terminationCcheck(Process terminator, int seqN,
+			boolean status) {
 		System.out.println("aktuelleSeq " + aktuelleSeqN + "eingang" + seqN);
-		if(aktuelleSeqN == seqN){
+		if (aktuelleSeqN == seqN) {
 			terminatedProcessCounter++;
-			if(terminatedProcessCounter == processes.size()){
+			if (terminatedProcessCounter == processes.size()) {
 				lastProcess = terminator;
 				terminated = true;
 			}
-		}else if(aktuelleSeqN < seqN){
+		} else if (aktuelleSeqN < seqN) {
 			terminatedProcessCounter = 0;
 			aktuelleSeqN = seqN;
 			System.out.println("else " + seqN);
@@ -64,25 +60,28 @@ public class KoordinatorImpl extends KoordinatorPOA{
 	}
 
 	@Override
-	public synchronized void activateStarter(Starter starter, String starterName) throws exAlreadyExists {
+	public synchronized void activateStarter(Starter starter, String starterName)
+			throws exAlreadyExists {
 		starters.put(starter, starterName);
-			}
+	}
 
 	@Override
 	public synchronized void deleteStarter(Starter starter) {
 		starters.remove(starter);
-		}
-	
+	}
+
 	public synchronized void registerMonitor(Monitor monitor) {
 		this.monitor = monitor;
 	}
-	
-	public synchronized void deleteMonitor(){
-		
+
+	public synchronized void deleteMonitor() {
+
 	}
 
-	@Override //timeout refactor 
-	public synchronized void startCalculation(int minProcesses, int maxProcesses, int minDelay, int maxDelay, int timeout, int ggt) {
+	@Override
+	// timeout refactor
+	public synchronized void startCalculation(int minProcesses,
+			int maxProcesses, int minDelay, int maxDelay, int timeout, int ggt) {
 		KoordinatorImpl tmp = this;
 		try {
 			koord = KoordinatorHelper.narrow(poa.servant_to_reference(tmp));
@@ -90,74 +89,81 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		int numOfProcess = (int)Math.round(Math.random()*(maxProcesses-minProcesses))+minProcesses;
-		
+		int numOfProcess = (int) Math.round(Math.random()
+				* (maxProcesses - minProcesses))
+				+ minProcesses;
+
 		System.out.println("starters: " + starters.size());
 		for (Starter e : starters.keySet()) {
-			try{
+			try {
 				e.createProcess(numOfProcess);
-			}catch(exInvalidCount ex){
+			} catch (exInvalidCount ex) {
 				System.out.println(ex.s);
 			}
 		}
-		
+
 		System.out.println("huhu1");
 		Map<Integer, Process> newList = new HashMap<Integer, Process>();
 		int length = processes.size();
-		for(int j = 0; j < length; j++)
-		{
-			int randomPlace = (int)Math.round(Math.random()*(processes.size()-1));
+		for (int j = 0; j < length; j++) {
+			int randomPlace = (int) Math.round(Math.random()
+					* (processes.size() - 1));
 			ringProcesses.add(processes.get(randomPlace));
 			processes.remove(randomPlace);
 		}
 		System.out.println("huhu2");
 		System.out.println("ring size. " + ringProcesses.size());
-		int [] startZahlen = new int[ringProcesses.size()];
-		for (int i = 0; i < ringProcesses.size(); i++){
-			
-			int startGGT = ggt*((int)Math.round(Math.random()*100)+1)*((int)Math.round(Math.random()*100)+1);
+		int[] startZahlen = new int[ringProcesses.size()];
+		for (int i = 0; i < ringProcesses.size(); i++) {
+
+			int startGGT = ggt * ((int) Math.round(Math.random() * 100) + 1)
+					* ((int) Math.round(Math.random() * 100) + 1);
 			startZahlen[i] = startGGT;
-			int delay = (int)Math.round(Math.random()*minDelay)+maxDelay;
-			
-			if(i == 0){
-//				System.out.println("huhu3");
-//				System.out.println(ringProcesses.get(0).name());
-				ringProcesses.get(i).init(ringProcesses.get(i+1), ringProcesses.get(ringProcesses.size()-1), startGGT , delay, timeout, monitor, koord);
+			int delay = (int) Math.round(Math.random() * minDelay) + maxDelay;
+
+			if (i == 0) {
+				// System.out.println("huhu3");
+				// System.out.println(ringProcesses.get(0).name());
+				ringProcesses.get(i).init(ringProcesses.get(i + 1),
+						ringProcesses.get(ringProcesses.size() - 1), startGGT,
+						delay, monitor, koord);
+			} else if (i == ringProcesses.size() - 1) {
+				ringProcesses.get(i).init(ringProcesses.get(0),
+						ringProcesses.get(i - 1), startGGT, delay, monitor,
+						koord);
+			} else {
+				ringProcesses.get(i).init(ringProcesses.get(i + 1),
+						ringProcesses.get(i - 1), startGGT, delay, monitor,
+						koord);
 			}
-			else if(i == ringProcesses.size()-1){
-				ringProcesses.get(i).init(ringProcesses.get(0), ringProcesses.get(i-1), startGGT , delay, timeout, monitor, koord);
-			}
-			else{
-				ringProcesses.get(i).init(ringProcesses.get(i+1), ringProcesses.get(i-1), startGGT , delay, timeout, monitor, koord);
-			}	
-			newList.put(startGGT,ringProcesses.get(i) );
+			newList.put(startGGT, ringProcesses.get(i));
 		}
 		String[] showRing = new String[ringProcesses.size()];
 		System.out.println("huhu3");
 		for (int i = 0; i < ringProcesses.size(); i++) {
 			showRing[i] = ringProcesses.get(i).name();
 		}
-		
+
 		monitor.ring(showRing);
 		monitor.startzahlen(startZahlen);
-		
-		//3 Prozesse mit der kleinsten Zahl starten
-		System.out.println("Prozesse: "+newList.size());
+
+		// 3 Prozesse mit der kleinsten Zahl starten
+		System.out.println("Prozesse: " + newList.size());
 		List<Integer> sortList = new ArrayList<Integer>(newList.keySet());
 		Collections.sort(sortList);
 		newList.get(sortList.get(0)).startCalulation();
 		newList.get(sortList.get(1)).startCalulation();
 		newList.get(sortList.get(2)).startCalulation();
-		
-		
-		//------------------------------- hier muss der termination complete code rein
+
+		// ------------------------------- hier muss der termination complete
+		// code rein
 		// soll der client solange offen bleiben oder schon beenden?
-		
+
 		TerminatorThread tt = new TerminatorThread(timeout, ringProcesses, this);
 		tt.start();
-		
-		//-------------------------------
-		
+
+		// -------------------------------
+
 	}
 
 	@Override
@@ -168,14 +174,13 @@ public class KoordinatorImpl extends KoordinatorPOA{
 			tmp[i] = e;
 			i++;
 		}
-		
+
 		return tmp;
 	}
 
 	@Override
 	public synchronized void exit() {
-		
-		
+
 	}
 
 }

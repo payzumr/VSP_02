@@ -70,7 +70,7 @@ module ggt {
                  void quit(in string starterName);
                  
                  //Methods for the Koordinator
-                 void init(in Process rightNeighbor, in Process leftNeighbor, in long  startGGT, in long delay, in long timeout, in Monitor theMonitor, in Koordinator koor);
+                 void init(in Process rightNeighbor, in Process leftNeighbor, in long  startGGT, in long delay, in Monitor theMonitor, in Koordinator koor);
                  void startCalulation();
         };
         

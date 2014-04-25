@@ -1,7 +1,6 @@
 package starter;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,19 +17,18 @@ import ggt.ProcessPOA;
 public class ProcessImpl extends ProcessPOA implements Runnable {
 	private String name;
 	private POA poa;
-	
+
 	private volatile boolean running = true;
 	private LinkedList<Integer> newNumbers = new LinkedList<Integer>();
 	private LinkedList<String> newMarkers = new LinkedList<String>();
 	private LinkedList<Integer> newSeqNumbers = new LinkedList<Integer>();
-	
+
 	private BlockingQueue<ProcessStatus> commandFifo = new LinkedBlockingQueue<ProcessStatus>();
 
 	private Process rightNeighbor;
 	private Process leftNeighbor;
 	private int startGGT;
 	private int delay;
-	private int timeout;
 	private Monitor theMonitor;
 	private Koordinator koor;
 	private Thread tp;
@@ -62,13 +60,13 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void sendMarker(String terminator, int seqN) {
-		if (terminator != null) {
+
+		if (sequenceNumber < seqN) {
+
 			newMarkers.add(terminator);
-		}else{
-			newMarkers.add("Koordinator");
+			newSeqNumbers.add(seqN);
+			commandFifo.add(ProcessStatus.TERMINATE);
 		}
-		newSeqNumbers.add(seqN);
-		commandFifo.add(ProcessStatus.TERMINATE);
 
 	}
 
@@ -86,13 +84,11 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void init(Process rightNeighbor, Process leftNeighbor,
-			int startGGT, int delay, int timeout, Monitor theMonitor,
-			Koordinator koor) {
+			int startGGT, int delay, Monitor theMonitor, Koordinator koor) {
 		this.rightNeighbor = rightNeighbor;
 		this.leftNeighbor = leftNeighbor;
 		this.startGGT = startGGT;
 		this.delay = delay;
-		this.timeout = timeout;
 		this.theMonitor = theMonitor;
 		this.koor = koor;
 
@@ -129,7 +125,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	}
 
 	private void snapshot() {
-		if(newSeqNumbers.getFirst() > sequenceNumber){
+		if (newSeqNumbers.getFirst() > sequenceNumber) {
 			rightMark = false;
 			leftMark = false;
 			terminateMark = true;
@@ -137,15 +133,17 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			rightNeighbor.sendMarker(this.name, sequenceNumber);
 			leftNeighbor.sendMarker(this.name, sequenceNumber);
 		}
-		if(rightNeighbor.name() == newMarkers.getFirst()){
+		System.out.println("new marker: " + newMarkers.getFirst());
+		if (rightNeighbor.name() == newMarkers.getFirst()) {
 			rightMark = true;
-		}else if(leftNeighbor.name() == newMarkers.getFirst()){
+		}
+		if (leftNeighbor.name() == newMarkers.getFirst()) {
 			leftMark = true;
 		}
-		
-		if(rightMark && leftMark){
+
+		if (rightMark && leftMark) {
 			System.out.println("right and left true");
-			if(terminateMark){
+			if (terminateMark) {
 				Process pro;
 				try {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
@@ -154,7 +152,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}else{
+			} else {
 				Process pro;
 				try {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
@@ -163,11 +161,11 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 		theMonitor.terminieren(name, newMarkers.poll(), terminateMark);
-		
+
 	}
 
 	private void calculateMi() {
@@ -179,7 +177,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			}
 			mi = ((mi - 1) % newNumbers.poll()) + 1;
 			System.out.println("Process: " + name + " Mi = " + mi);
-			
+
 			terminateMark = false;
 			rightNeighbor.newNumber(mi, this.name);
 			leftNeighbor.newNumber(mi, this.name);

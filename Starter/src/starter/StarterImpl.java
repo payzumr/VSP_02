@@ -19,7 +19,7 @@ public class StarterImpl extends StarterPOA {
 	private List<ProcessImpl> processList = new ArrayList<ProcessImpl>();
 	private POA poa;
 
-	public StarterImpl(String name,Koordinator koor, POA poa) {
+	public StarterImpl(String name, Koordinator koor, POA poa) {
 		super();
 		this.name = name;
 		this.koor = koor;
@@ -41,14 +41,17 @@ public class StarterImpl extends StarterPOA {
 		} else {
 			System.out.println("huhu3");
 			for (int i = 0; i < numberOfProcesses; i++) {
-				String pName = name + i;//make name
-				ProcessImpl newP = new ProcessImpl(pName, poa);//generate new Process
-				processList.add(newP);//add to process list
+				String pName = name + i;// make name
+				ProcessImpl newP = new ProcessImpl(pName, poa);// generate new
+																// Process
+				processList.add(newP);// add to process list
 				newP.getThread().start();
 				System.out.println("huhu4");
 				try {
-					Process pro = ProcessHelper.narrow(poa.servant_to_reference(newP));//narrow ProcessImpl to Process
-					koor.registerProcess(pro);//register process at Koordinator
+					Process pro = ProcessHelper.narrow(poa
+							.servant_to_reference(newP));// narrow ProcessImpl
+															// to Process
+					koor.registerProcess(pro);// register process at Koordinator
 					System.out.println("huhu5");
 				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
