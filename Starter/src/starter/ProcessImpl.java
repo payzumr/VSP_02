@@ -27,7 +27,6 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	private Process rightNeighbor;
 	private Process leftNeighbor;
-	private int startGGT;
 	private int delay;
 	private Monitor theMonitor;
 	private Koordinator koor;
@@ -71,14 +70,9 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 	}
 
 	@Override
-	public synchronized void stop(Process stopper) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public synchronized void quit(String starterName) {
-		// TODO Auto-generated method stub
+		running = false;
+		System.out.println(this.name + "beendet");
 
 	}
 
@@ -87,7 +81,6 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			int startGGT, int delay, Monitor theMonitor, Koordinator koor) {
 		this.rightNeighbor = rightNeighbor;
 		this.leftNeighbor = leftNeighbor;
-		this.startGGT = startGGT;
 		this.delay = delay;
 		this.theMonitor = theMonitor;
 		this.koor = koor;
@@ -153,7 +146,6 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
 					koor.terminationCcheck(pro, sequenceNumber, true);
 				} catch (ServantNotActive | WrongPolicy e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
@@ -162,7 +154,6 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 					pro = ProcessHelper.narrow(poa.servant_to_reference(this));
 					koor.terminationCcheck(pro, sequenceNumber, false);
 				} catch (ServantNotActive | WrongPolicy e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -191,7 +182,6 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			rightNeighbor.newNumber(mi, this.name);
 			leftNeighbor.newNumber(mi, this.name);
 		} else {
-			// ???
 			newNumbers.poll();
 		}
 

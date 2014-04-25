@@ -33,26 +33,18 @@ public class StarterImpl extends StarterPOA {
 
 	@Override
 	public synchronized void createProcess(int count) throws exInvalidCount {
-		System.out.println("huhu1");
 		int numberOfProcesses = count;
 		if (numberOfProcesses < 1) {
-			System.out.println("huhu2");
 			throw new exInvalidCount();
 		} else {
-			System.out.println("huhu3");
 			for (int i = 0; i < numberOfProcesses; i++) {
 				String pName = name + i;// make name
-				ProcessImpl newP = new ProcessImpl(pName, poa);// generate new
-																// Process
+				ProcessImpl newP = new ProcessImpl(pName, poa);// generate new Process
 				processList.add(newP);// add to process list
 				newP.getThread().start();
-				System.out.println("huhu4");
 				try {
-					Process pro = ProcessHelper.narrow(poa
-							.servant_to_reference(newP));// narrow ProcessImpl
-															// to Process
+					Process pro = ProcessHelper.narrow(poa.servant_to_reference(newP));// narrow ProcessImp to Process
 					koor.registerProcess(pro);// register process at Koordinator
-					System.out.println("huhu5");
 				} catch (ServantNotActive | WrongPolicy e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -66,6 +58,7 @@ public class StarterImpl extends StarterPOA {
 
 	@Override
 	public synchronized void exit() {
+		System.out.println("Starter Exit!!");
 		try {
 			new Thread() {
 				public void run() {
@@ -77,8 +70,9 @@ public class StarterImpl extends StarterPOA {
 			e.printStackTrace(System.out);
 		}
 	}
-	
-	public synchronized void processExit(){
+
+	public synchronized void processExit() {
+		System.out.println("Beende Prozesse: ");
 		for (ProcessImpl e : processList) {
 			e.quit(name);
 		}

@@ -64,7 +64,6 @@ module ggt {
                  // Methods for the other Processes
                  void newNumber(in long number, in string senderName);
                  void sendMarker(in string terminator, in long seqN);
-                 void stop(in Process stopper);
                   
                  //Methods for the Starter
                  void quit(in string starterName);
@@ -100,7 +99,6 @@ module ggt {
 				
 				// Methods for the Monitor
 				void registerMonitor (in Monitor monitor);
-				void deleteMonitor ();
                 
                 // Methods for the Client
                 void startCalculation(in long minProcesses, in long maxProcesses, in long minDelay, in long maxDelay, in long timeout, in long ggt);

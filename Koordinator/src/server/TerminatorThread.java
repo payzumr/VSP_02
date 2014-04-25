@@ -22,16 +22,21 @@ public class TerminatorThread extends Thread {
 
 	@Override
 	public void run() {
+		
+		try {
+			sleep(termTime);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 
 		while (running) {
 			try {
-				sleep(termTime);
 
 				int randomPlace = (int) Math.round(Math.random()
 						* (ring.size() - 1));
 
 				if (!koord.terminated) {
-					ring.get(2).sendMarker("Koordinator", sequenz);
+					ring.get(randomPlace).sendMarker("Koordinator", sequenz);
 					sequenz++;
 
 				} else {
@@ -45,9 +50,13 @@ public class TerminatorThread extends Thread {
 					}
 					
 				}
+				sleep(termTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void setRunning(boolean status){
+		this.running = status;
 	}
 }

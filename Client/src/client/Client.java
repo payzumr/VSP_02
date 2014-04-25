@@ -48,9 +48,10 @@ public class Client {
 					System.out.println("Keine Starter registriert");
 				}else{
 					for(int i = 0; i < starters.length; i++){
-						System.out.println("Starter "+ i + ":" + starters[i]);
+						System.out.println("Starter " + i + ": " + starters[i].name());
 					}
 				}
+				break;
 				 
 			case "start"	:
 				koordinator.startCalculation(	Integer.parseInt(args[4]),
@@ -60,8 +61,10 @@ public class Client {
 												Integer.parseInt(args[8]), 
 												Integer.parseInt(args[9]));
 				
-				System.out.println("Kalkulation gestartet");				
+				System.out.println("Kalkulation gestartet");	
+				break;
 			case "ende"		:
+				System.out.println("client exit");				
 				koordinator.exit();
 				break;
 				
