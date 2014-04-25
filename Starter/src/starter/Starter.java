@@ -49,7 +49,7 @@ public class Starter {
 				// Referenz fuer den Servant besorgen
 				org.omg.CORBA.Object ref = rootPoa.servant_to_reference(starter);
 
-				// Downcast Corba-Objekt -> koordinator
+				// Downcast Corba-Objekt -> starter
 				ggt.Starter href = StarterHelper.narrow(ref);
 
 				//starter bei koordinator anmelden

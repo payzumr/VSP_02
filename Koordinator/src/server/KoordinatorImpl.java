@@ -27,7 +27,7 @@ public class KoordinatorImpl extends KoordinatorPOA {
 	private Koordinator koord;
 	private POA poa;
 
-	private int aktuelleSeqN = 0;
+	private int aktuelleSeqN = 1;
 	private int terminatedProcessCounter = 0;
 	boolean terminated = false;
 	ggt.Process lastProcess;
@@ -45,16 +45,21 @@ public class KoordinatorImpl extends KoordinatorPOA {
 	@Override
 	public synchronized void terminationCcheck(Process terminator, int seqN,
 			boolean status) {
-		System.out.println("aktuelleSeq " + aktuelleSeqN + "eingang" + seqN);
-		if (aktuelleSeqN == seqN) {
+		System.out.println("aktuelleSeq " + aktuelleSeqN + " eingang " + seqN + " Status " + status + " ich komme " + terminator.name());
+		if ((aktuelleSeqN == seqN) && status) {
 			terminatedProcessCounter++;
-			System.out.println("Counter: " + terminatedProcessCounter + " Size: " + ringProcesses.size());
+			System.out.println("Counter: " + terminatedProcessCounter + " Size: " + ringProcesses.size() + " Terminator " + terminator.name());
 			if (terminatedProcessCounter == ringProcesses.size()) {
 				lastProcess = terminator;
 				terminated = true;
 			}
-		} else if (aktuelleSeqN < seqN) {
-			terminatedProcessCounter = 0;
+		} else if (aktuelleSeqN < seqN) { //aktuelleSeqN < seqN
+			System.out.println("0 setzen");
+			if(status){
+				terminatedProcessCounter = 1;
+			}else{
+				terminatedProcessCounter = 0;
+			}
 			aktuelleSeqN = seqN;
 			System.out.println("else " + seqN);
 		}
