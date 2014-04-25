@@ -53,7 +53,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 
 	@Override
 	public synchronized void newNumber(int number, String name) {
-		theMonitor.rechnen(name, name, number);
+		theMonitor.rechnen(this.name, name, number);
 		newNumbers.add(number);
 		commandFifo.add(ProcessStatus.CALCULATE);
 	}
@@ -187,6 +187,7 @@ public class ProcessImpl extends ProcessPOA implements Runnable {
 			System.out.println("Process: " + name + " Mi = " + mi);
 
 			terminateMark = false;
+			
 			rightNeighbor.newNumber(mi, this.name);
 			leftNeighbor.newNumber(mi, this.name);
 		} else {
